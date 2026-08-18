@@ -697,6 +697,17 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
     if (!widget.interactionEnabled) return;
 
     final index = entry.key;
+    
+    // Clean up
+    drawableInitialFocalPoints.remove(index);
+    initialScaleDrawables.remove(index);
+    for (final assistSet in assistDrawables.values) {
+      assistSet.remove(index);
+    }
+
+    final actionStarted = activeDrawableActions.remove(index);
+
+
 
     // Using the index instead of [entry.value] is to prevent an issue
     // when an update and end events happen before the UI is updated,
@@ -704,15 +715,10 @@ class _ObjectWidgetState extends State<_ObjectWidget> {
     // This causes updating the entry in this method to sometimes fail
     // To get around it, the object is fetched directly from the drawables
     // in the controller
-    final drawable = drawables[index];
-    final actionStarted = activeDrawableActions.remove(index);
 
-    // Clean up
-    drawableInitialFocalPoints.remove(index);
-    initialScaleDrawables.remove(index);
-    for (final assistSet in assistDrawables.values) {
-      assistSet.remove(index);
-    }
+    if (index < 0 || index >= drawables.length) return;
+    final drawable = drawables[index];
+        
 
     // Remove any assist lines the object has.
     if (drawable.assists.isNotEmpty) {
